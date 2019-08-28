@@ -1,17 +1,22 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { StyledFunction } from "styled-components";
 
-const LayoutContainer = styled.div`
+interface LayoutProps {
+  padding?: string;
+}
+
+const LayoutContainer = styled.div<LayoutProps>`
   display: flex;
-  padding: 0 20px;
+  padding: ${props =>
+    props.padding !== "undefined" ? props.padding : "0 20px"};
   align-items: center;
   justify-content: center;
   flex: 1;
   flex-direction: column;
 `;
 
-const Layout: React.FC = props => {
-  return <LayoutContainer>{props.children}</LayoutContainer>;
+const Layout: React.FC<LayoutProps> = props => {
+  return <LayoutContainer {...props}>{props.children}</LayoutContainer>;
 };
 
 export default Layout;

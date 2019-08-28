@@ -3,7 +3,6 @@ import TestData from "../data/medicine/Atorvastatin-40mg";
 import Layout from "../components/Layout";
 import { Heading, Button } from "@kiwicom/orbit-components";
 import styled from "styled-components";
-import { Z_FIXED } from "zlib";
 
 const Dynamsoft = window.Dynamsoft;
 
@@ -88,7 +87,7 @@ class ScanMedicine extends React.Component {
   }
   render() {
     return (
-      <Layout>
+      <Layout padding="0">
         <ScannerContainer id="scanner-container">
           <ScanMedicineHeader>
             <ScanMedicineTitleContainer>
