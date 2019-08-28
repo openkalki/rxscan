@@ -1,23 +1,38 @@
 import React from "react";
 import TestData from "../data/medicine/Atorvastatin-40mg";
 import Layout from "../components/Layout";
+import { Heading, Button } from "@kiwicom/orbit-components";
 import styled from "styled-components";
+import { Z_FIXED } from "zlib";
 
 const Dynamsoft = window.Dynamsoft;
 
 const ScannerContainer = styled.div`
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   align-items: center;
-  background: pink;
+  width: 100%;
+`;
+
+const ScanMedicineHeader = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
 `;
 
 const ScanMedicineTitleContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
+  background-color: rgba(255, 255, 255, 0.5);
 `;
 
-const ScanMedicineTitle = styled.span`
-  font-size: 1.8em;
-  margin: 10px auto;
+const ShowScannerButton = styled.div`
+  position: fixed;
+  bottom: 20px;
 `;
 
 class ScanMedicine extends React.Component {
@@ -36,9 +51,9 @@ class ScanMedicine extends React.Component {
       }
     }).then(s => {
       scanner = s;
-      scanner.updateVideoSettings({
-        video: { width: 720, height: 720, facingMode: "environment" }
-      });
+      // scanner.updateVideoSettings({
+      //   video: { width: 720, height: 720, facingMode: "environment" }
+      // });
 
       let runtimeSettings = scanner.getRuntimeSettings();
       // Specify which symbologies are to enabled
@@ -74,20 +89,26 @@ class ScanMedicine extends React.Component {
   render() {
     return (
       <Layout>
-        <button
-          onClick={() => {
-            this.showScanner();
-          }}
-        >
-          show scanner
-        </button>
         <ScannerContainer id="scanner-container">
-          <ScanMedicineTitleContainer>
-            <ScanMedicineTitle>
-              Scan <b>{TestData.name}</b>
-            </ScanMedicineTitle>
-          </ScanMedicineTitleContainer>
+          <ScanMedicineHeader>
+            <ScanMedicineTitleContainer>
+              <Heading type="display">
+                Scan <b>{TestData.name}</b>
+              </Heading>
+            </ScanMedicineTitleContainer>
+          </ScanMedicineHeader>
+
           <video class="dbrScanner-video" playsinline="true" />
+          <Button
+            component={ShowScannerButton}
+            onClick={() => {
+              this.showScanner();
+            }}
+            size="large"
+            // type="secondary"
+          >
+            Show Scanner
+          </Button>
         </ScannerContainer>
       </Layout>
     );

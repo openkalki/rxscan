@@ -7,6 +7,7 @@ const LayoutContainer = styled.div`
   align-items: center;
   justify-content: center;
   flex: 1;
+  flex-direction: column;
 `;
 
 const Layout: React.FC = props => {
