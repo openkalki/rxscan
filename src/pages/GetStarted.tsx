@@ -6,13 +6,16 @@ import { Heading, Button } from "@kiwicom/orbit-components";
 import { Link } from "react-router-dom";
 
 const GetStartedInnerContainer = styled.div`
-  background: blue;
+  width:100%
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #EEE;
 `;
 
-const StartButton = styled(Button)`
-  margin: 0 auto;
-`;
+const StartButton = styled(Button)``;
 
 const GetStarted: React.FC = props => {
   return (
