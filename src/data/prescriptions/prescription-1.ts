@@ -7,10 +7,6 @@ const data: IPrescription = {
       quantity: 112,
       units: "tablets"
     },
-    "5021691032069": {
-      quantity: 56,
-      units: "tablets"
-    },
     "5012617019783": {
       quantity: 60,
       units: "tablets"
