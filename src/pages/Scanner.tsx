@@ -80,8 +80,6 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     } else {
       this.state.scannerType = ScannerType.MEDICINE;
     }
-    this.updateHeading();
-    this.state.scannerHeading = this.getHeading(this.state.scannerType);
 
     this.state.isFetchingData = false;
   }
@@ -90,6 +88,14 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     return new Promise(resolve => {
       this.setState(state, resolve);
     });
+  }
+
+  getHeading(scannerType: ScannerType) {
+    const currentItem = this.getCurrentItem() as IDrug;
+    let currentItemName = currentItem ? currentItem.name : "Drug";
+    return scannerType === ScannerType.PRESCRIPTION
+      ? "Scan a prescription"
+      : `Scan ${currentItemName}`;
   }
 
   lookupDrugInfo(drugBarcode: string): IDrug | false {
@@ -212,6 +218,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
         this.state.currentPrescription
       );
       this.getCurrentItem();
+      await this.updateHeading(ScannerType.MEDICINE);
     }
   }
 
@@ -266,9 +273,11 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
   }
 
   async componentDidMount() {
-    // This updates the remaining Items when loaded from LocalStorage
     if (this.state.currentPrescription) {
       await this.updateRemainingItems(this.state.currentPrescription);
+      await this.updateHeading(ScannerType.MEDICINE);
+    } else {
+      await this.updateHeading(ScannerType.PRESCRIPTION);
     }
 
     console.log(
@@ -298,19 +307,11 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     }
   }
 
-  getHeading(scannerType: ScannerType) {
-    const currentItem = this.getCurrentItem() as IDrug;
-    let currentItemName = currentItem ? currentItem.name : "Drug";
-    return scannerType === ScannerType.PRESCRIPTION
-      ? "Scan a prescription"
-      : `Scan ${currentItemName}`;
-  }
-
-  async updateHeading() {
+  async updateHeading(scannerType: ScannerType) {
     return await this.setStateAsync({
       ...this.state,
-      scannerType: ScannerType.MEDICINE,
-      scannerHeading: this.getHeading(ScannerType.MEDICINE)
+      scannerType: scannerType,
+      scannerHeading: this.getHeading(scannerType)
     });
   }
 
@@ -319,7 +320,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
 
     await this.updatePrescription(TestPrescription2);
 
-    this.updateHeading();
+    await this.updateHeading(ScannerType.MEDICINE);
 
     //The function below replaces the code
 
