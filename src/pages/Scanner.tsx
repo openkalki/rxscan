@@ -1,5 +1,6 @@
 import React from "react";
 import { MedicineData } from "../data/medicine";
+import { PrescriptionData } from "../data/prescriptions";
 import Layout from "../components/Layout";
 //@ts-ignore
 import { Heading, Button, Text } from "@kiwicom/orbit-components";
@@ -54,7 +55,7 @@ interface IScannerProps {
 }
 
 interface IScannerState {
-  currentPrescription: IPrescription;
+  currentPrescription?: IPrescription;
   isFetchingData: boolean;
   isPageLoading: boolean;
   scannerType?: ScannerType;
@@ -63,7 +64,6 @@ interface IScannerState {
 
 class Scanner extends React.Component<IScannerProps, IScannerState> {
   state: IScannerState = {
-    currentPrescription: TestPrescription2,
     isFetchingData: true,
     isPageLoading: true,
     scannerHeading: ""
@@ -107,6 +107,10 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
 
   lookupDrugInfo(drugBarcode: string): IDrug | false {
     return (MedicineData[drugBarcode] as IDrug) || false;
+  }
+
+  lookupPrescriptionInfo(preBarcode: string): IPrescription | false {
+    return (PrescriptionData[preBarcode] as IPrescription) || false;
   }
 
   async updateRemainingItems(prescription: IPrescription) {
@@ -185,17 +189,19 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
 
       //This function replaces code below
 
-      await this.updatePrescription({
-        ...this.state.currentPrescription,
-        items: {
-          ...this.state.currentPrescription.items,
-          [drugBarcode]: {
-            ...this.state.currentPrescription.items[drugBarcode],
-            quantity:
-              prescription.items[drugBarcode].quantity - drug.quantity.value
+      if (this.state.currentPrescription) {
+        await this.updatePrescription({
+          ...this.state.currentPrescription,
+          items: {
+            ...this.state.currentPrescription.items,
+            [drugBarcode]: {
+              ...this.state.currentPrescription.items[drugBarcode],
+              quantity:
+                prescription.items[drugBarcode].quantity - drug.quantity.value
+            }
           }
-        }
-      });
+        });
+      }
 
       console.log(
         "Prescription After Calculation",
@@ -281,7 +287,10 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
   }
 
   async validateScannedBarcode(barcode: string) {
-    if (this.state.currentPrescription.remainingItems) {
+    if (
+      this.state.currentPrescription &&
+      this.state.currentPrescription.remainingItems
+    ) {
       if (this.state.currentPrescription.remainingItems.length !== 0) {
         const currentItem = this.getCurrentItem() as IDrug;
         let isDrugValid = false;
@@ -296,11 +305,22 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
           ? alert("The medicine is correct!")
           : alert("Wrong medicine!");
       }
+    } else {
+      const prescription = this.lookupPrescriptionInfo(barcode);
+
+      if (prescription) {
+        await this.updatePrescription(prescription);
+      } else {
+        alert("Prescription Doesnt Exist");
+      }
     }
   }
 
   testDrugScanning() {
-    if (this.state.currentPrescription.remainingItems) {
+    if (
+      this.state.currentPrescription &&
+      this.state.currentPrescription.remainingItems
+    ) {
       if (this.state.currentPrescription.remainingItems.length !== 0) {
         this.validateDrug(
           this.state.currentPrescription,
@@ -325,9 +345,8 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
   async testPrescriptionScanning() {
     //This will take in a scanned prescription later
 
-    await this.updatePrescription(TestPrescription2);
-    //Test of moving this makes the code simpler
-    //await this.updateHeading(ScannerType.MEDICINE);
+    //await this.updatePrescription(TestPrescription2);
+    this.validateScannedBarcode("3434");
   }
 
   getScanButton() {
