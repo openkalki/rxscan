@@ -158,8 +158,6 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     await this.updateRemainingItems(prescription);
 
     await this.updateHeading(ScannerType.MEDICINE);
-
-    alert("Checked Medicine!");
   }
 
   isDrugValid(prescription: IPrescription, drugBarcode: string): IDrug | false {
@@ -282,13 +280,17 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     console.log("State after page has loaded", this.state);
   }
 
-  validateScannedBarcode(barcode: string) {
+  async validateScannedBarcode(barcode: string) {
     if (this.state.currentPrescription.remainingItems) {
       if (this.state.currentPrescription.remainingItems.length !== 0) {
-        let isDrugValid = this.validateDrug(
-          this.state.currentPrescription,
-          barcode
-        );
+        const currentItem = this.getCurrentItem() as IDrug;
+        let isDrugValid = false;
+        if (currentItem.barcode === barcode) {
+          isDrugValid = await this.validateDrug(
+            this.state.currentPrescription,
+            barcode
+          );
+        }
 
         isDrugValid
           ? alert("The medicine is correct!")
