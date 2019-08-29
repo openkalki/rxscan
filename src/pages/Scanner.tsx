@@ -212,51 +212,56 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
 
   showScanner() {
     let scanner: any = null;
-    Dynamsoft.BarcodeScanner.createInstance({
-      UIElement: document.getElementById("scanner-container"),
-      onFrameRead: (results: any) => {},
-      onUnduplicatedRead: (txt: any, result: any) => {
-        this.validateScannedBarcode(txt);
-      }
-    }).then((s: any) => {
-      scanner = s;
-      // scanner.updateVideoSettings({
-      //   video: { width: 720, height: 720, facingMode: "environment" }
-      // });
+    try {
+      Dynamsoft.BarcodeScanner.createInstance({
+        UIElement: document.getElementById("scanner-container"),
+        onFrameRead: (results: any) => {},
+        onUnduplicatedRead: (txt: any, result: any) => {
+          this.validateScannedBarcode(txt);
+        }
+      }).then((s: any) => {
+        scanner = s;
+        // scanner.updateVideoSettings({
+        //   video: { width: 720, height: 720, facingMode: "environment" }
+        // });
 
-      let runtimeSettings = scanner.getRuntimeSettings();
-      // Specify which symbologies are to enabled
-      runtimeSettings.BarcodeFormatIds = Dynamsoft.EnumBarcodeFormat.TwoD;
-      // By default, the library assumes accurate focus and good lighting. The settings below are for more complex environments. Check out according API descriptions for more info.
-      runtimeSettings.localizationModes = [2, 0, 0, 0, 0, 0, 0, 0];
-      runtimeSettings.deblurLevel = 0;
-      // Discard results which have a low confidence score.
-      // runtimeSettings.minResultConfidence = 1;
+        let runtimeSettings = scanner.getRuntimeSettings();
+        // Specify which symbologies are to enabled
+        runtimeSettings.BarcodeFormatIds = Dynamsoft.EnumBarcodeFormat.TwoD;
+        // By default, the library assumes accurate focus and good lighting. The settings below are for more complex environments. Check out according API descriptions for more info.
+        runtimeSettings.localizationModes = [2, 0, 0, 0, 0, 0, 0, 0];
+        runtimeSettings.deblurLevel = 0;
+        // Discard results which have a low confidence score.
+        // runtimeSettings.minResultConfidence = 1;
 
-      runtimeSettings.region.measuredByPercentage = 1;
-      runtimeSettings.region.left = 25;
-      runtimeSettings.region.top = 25;
-      runtimeSettings.region.right = 25;
-      runtimeSettings.region.bottom = 25;
+        runtimeSettings.region.measuredByPercentage = 1;
+        runtimeSettings.region.left = 25;
+        runtimeSettings.region.top = 25;
+        runtimeSettings.region.right = 25;
+        runtimeSettings.region.bottom = 25;
 
-      scanner.updateRuntimeSettings(runtimeSettings);
+        scanner.updateRuntimeSettings(runtimeSettings);
 
-      let scanSettings = scanner.getScanSettings();
-      // Disregard duplicated results found in a specified time period
-      scanSettings.duplicateForgetTime = 2000;
-      // Set a interval so that the CPU can relax
-      scanSettings.intervalTime = 2;
-      scanner.setScanSettings(scanSettings);
+        let scanSettings = scanner.getScanSettings();
+        // Disregard duplicated results found in a specified time period
+        scanSettings.duplicateForgetTime = 2000;
+        // Set a interval so that the CPU can relax
+        scanSettings.intervalTime = 2;
+        scanner.setScanSettings(scanSettings);
 
-      scanner.show().catch((ex: any) => {
-        console.log(ex);
-        alert("ex.message || ex");
-        scanner.hide();
+        scanner.show().catch((ex: any) => {
+          console.log(ex);
+          //alert("ex.message || ex");
+          //scanner.hide();
+        });
       });
-    });
+    } catch (e) {
+      console.log("Problem initilising barcode scanner");
+    }
   }
 
   async componentDidMount() {
+    this.showScanner();
     /* This is to initialise the state after retriving a prescription from local storage */
     if (this.state.currentPrescription) {
       await this.updateRemainingItems(this.state.currentPrescription);
