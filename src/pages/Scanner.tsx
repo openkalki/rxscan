@@ -94,6 +94,13 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
   getHeading(scannerType: ScannerType) {
     const currentItem = this.getCurrentItem() as IDrug;
     let currentItemName = currentItem ? currentItem.name : "Drug";
+    if (
+      this.state.currentPrescription &&
+      this.state.currentPrescription.remainingItems &&
+      this.state.currentPrescription.remainingItems.length === 0
+    ) {
+      return "Prescription Complete";
+    }
     return scannerType === ScannerType.PRESCRIPTION
       ? "Scan a prescription"
       : `Scan ${currentItemName}`;
@@ -139,8 +146,6 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
   }
 
   async updatePrescription(prescription: IPrescription) {
-    //Could be dangerous doing update state here. Might break other use cases apart from scan prescription test.
-
     await this.setStateAsync({
       ...this.state,
       currentPrescription: prescription
@@ -151,7 +156,11 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
       JSON.stringify(prescription)
     );
 
-    this.updateRemainingItems(prescription);
+    await this.updateRemainingItems(prescription);
+
+    await this.updateHeading(ScannerType.MEDICINE);
+
+    alert("Checked Medicine!");
   }
 
   isDrugValid(prescription: IPrescription, drugBarcode: string): IDrug | false {
@@ -196,8 +205,6 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
         drugBarcode,
         this.state.currentPrescription
       );
-      this.getCurrentItem();
-      await this.updateHeading(ScannerType.MEDICINE);
     }
   }
 
@@ -210,7 +217,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
         if (MedicineData.barcode === parseInt(txt)) {
           alert(`${MedicineData.name} is the right medicine! `);
         } else {
-          alert("This medicine is incorrect, you nearly killed someone!");
+          alert("This medicine is incorrect");
         }
       }
     }).then((s: any) => {
@@ -252,6 +259,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
   }
 
   async componentDidMount() {
+    /* This is to initialise the state after retriving a prescription from local storage */
     if (this.state.currentPrescription) {
       await this.updateRemainingItems(this.state.currentPrescription);
       await this.updateHeading(ScannerType.MEDICINE);
@@ -298,8 +306,8 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     //This will take in a scanned prescription later
 
     await this.updatePrescription(TestPrescription2);
-
-    await this.updateHeading(ScannerType.MEDICINE);
+    //Test of moving this makes the code simpler
+    //await this.updateHeading(ScannerType.MEDICINE);
   }
 
   getScanButton() {
