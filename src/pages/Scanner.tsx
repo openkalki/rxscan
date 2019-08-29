@@ -8,7 +8,6 @@ import TestPrescription from "../data/prescriptions/prescription-1";
 import IPrescription from "../models/Prescription";
 import IDrug from "../models/Drug";
 import IPrescriptionItem from "../models/PrescriptionItem";
-import { throwStatement } from "@babel/types";
 
 let TestPrescription2 = TestPrescription;
 
@@ -205,6 +204,9 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
         drugBarcode,
         this.state.currentPrescription
       );
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -214,11 +216,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
       UIElement: document.getElementById("scanner-container"),
       onFrameRead: (results: any) => {},
       onUnduplicatedRead: (txt: any, result: any) => {
-        if (MedicineData.barcode === parseInt(txt)) {
-          alert(`${MedicineData.name} is the right medicine! `);
-        } else {
-          alert("This medicine is incorrect");
-        }
+        this.validateScannedBarcode(txt);
       }
     }).then((s: any) => {
       scanner = s;
@@ -277,6 +275,21 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
       isPageLoading: false
     });
     console.log("State after page has loaded", this.state);
+  }
+
+  validateScannedBarcode(barcode: string) {
+    if (this.state.currentPrescription.remainingItems) {
+      if (this.state.currentPrescription.remainingItems.length !== 0) {
+        let isDrugValid = this.validateDrug(
+          this.state.currentPrescription,
+          barcode
+        );
+
+        isDrugValid
+          ? alert("The medicine is correct!")
+          : alert("Wrong medicine!");
+      }
+    }
   }
 
   testDrugScanning() {
