@@ -60,13 +60,17 @@ interface IScannerState {
   isPageLoading: boolean;
   scannerType?: ScannerType;
   scannerHeading?: string;
+  isPrescriptionComplete: boolean;
 }
 
 class Scanner extends React.Component<IScannerProps, IScannerState> {
+  key = this.generateKey();
+
   state: IScannerState = {
     isFetchingData: true,
     isPageLoading: true,
-    scannerHeading: ""
+    scannerHeading: "",
+    isPrescriptionComplete: false
   };
 
   constructor(props: Readonly<IScannerProps>) {
@@ -82,6 +86,17 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     }
 
     this.state.isFetchingData = false;
+  }
+
+  generateKey() {
+    return (
+      Math.random()
+        .toString(36)
+        .substring(2, 15) +
+      Math.random()
+        .toString(36)
+        .substring(2, 15)
+    );
   }
 
   setStateAsync(state: any) {
@@ -310,6 +325,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
 
       if (prescription) {
         await this.updatePrescription(prescription);
+        alert("Prescription Found!");
       } else {
         alert("Prescription Doesnt Exist");
       }
@@ -346,10 +362,10 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     //This will take in a scanned prescription later
 
     //await this.updatePrescription(TestPrescription2);
-    this.validateScannedBarcode("3434");
+    this.validateScannedBarcode("92838847653726356478");
   }
 
-  getScanButton() {
+  getDeveloperScanButton() {
     return (
       <Button
         component={ShowScannerButton}
@@ -367,7 +383,25 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     );
   }
 
+  async resetState() {
+    await this.setStateAsync({
+      ...this.state,
+      isPrescriptionComplete: false
+    });
+    window.localStorage.removeItem("currentPrescription");
+
+    await this.setStateAsync({
+      ...this.state,
+      currentPrescription: null
+    });
+    await this.updateHeading(ScannerType.PRESCRIPTION);
+
+    this.key = this.generateKey();
+    console.log(this.key);
+  }
+
   render() {
+    console.log(this.state.isPrescriptionComplete);
     let currentItem;
     if (
       this.state.currentPrescription &&
@@ -380,8 +414,10 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
       }
     }
 
+    let developerButtons = false;
+
     return (
-      <Layout padding="0">
+      <Layout padding="0" key={this.key}>
         <ScannerContainer id="scanner-container">
           <ScanMedicineHeader>
             <ScanMedicineTitleContainer>
@@ -394,7 +430,18 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
           </ScanMedicineHeader>
 
           <video className="dbrScanner-video" playsInline={true} />
-          {this.getScanButton()}
+          {this.state.isPrescriptionComplete && (
+            <Button
+              component={ShowScannerButton}
+              onClick={() => {
+                this.resetState();
+              }}
+              size="large"
+            >
+              Scan Another Prescription
+            </Button>
+          )}
+          {developerButtons && this.getDeveloperScanButton()}
         </ScannerContainer>
       </Layout>
     );
