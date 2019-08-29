@@ -36,6 +36,7 @@ const ScanMedicineTitleContainer = styled.div`
   align-items: center;
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.5);
+  flex-direction: column;
 `;
 
 const ShowScannerButton = styled.div`
@@ -176,21 +177,6 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
       );
       console.log("Drug Item", drug);
 
-      // await this.setStateAsync({
-      //   ...this.state,
-      //   currentPrescription: {
-      //     ...this.state.currentPrescription,
-      //     items: {
-      //       ...this.state.currentPrescription.items,
-      //       [drugBarcode]: {
-      //         ...this.state.currentPrescription.items[drugBarcode],
-      //         quantity:
-      //           prescription.items[drugBarcode].quantity - drug.quantity.value
-      //       }
-      //     }
-      //   }
-      // });
-
       //This function replaces code below
 
       await this.updatePrescription({
@@ -204,13 +190,6 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
           }
         }
       });
-
-      // window.localStorage.setItem(
-      //   "currentPrescription",
-      //   JSON.stringify(this.state.currentPrescription)
-      // );
-
-      // this.updateRemainingItems(this.state.currentPrescription);
 
       console.log(
         "Prescription After Calculation",
@@ -321,15 +300,6 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     await this.updatePrescription(TestPrescription2);
 
     await this.updateHeading(ScannerType.MEDICINE);
-
-    //The function below replaces the code
-
-    // window.localStorage.setItem(
-    //   "currentPrescription",
-    //   JSON.stringify(TestPrescription2)
-    // );
-
-    // this.updateRemainingItems(TestPrescription2);
   }
 
   getScanButton() {
@@ -351,17 +321,29 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
   }
 
   render() {
+    let currentItem;
+    if (
+      this.state.currentPrescription &&
+      this.state.currentPrescription.remainingItems
+    ) {
+      if (this.state.currentPrescription.remainingItems.length !== 0) {
+        currentItem = this.state.currentPrescription.items[
+          this.state.currentPrescription.remainingItems[0]
+        ];
+      }
+    }
+
     return (
       <Layout padding="0">
         <ScannerContainer id="scanner-container">
           <ScanMedicineHeader>
             <ScanMedicineTitleContainer>
               <Heading type="display">{this.state.scannerHeading}</Heading>
+              <Text size="large">
+                {currentItem &&
+                  `${currentItem.quantity} ${currentItem.units} remaining`}
+              </Text>
             </ScanMedicineTitleContainer>
-            <Text size="large">
-              {/* {MedicineData.quantity.value} {MedicineData.quantity.unit} */}
-              remaining
-            </Text>
           </ScanMedicineHeader>
 
           <video className="dbrScanner-video" playsInline={true} />
