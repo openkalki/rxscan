@@ -11,6 +11,8 @@ import Drug7 from "./5017123055164";
 import Drug8 from "./5012854010178";
 import Drug9 from "./5021730030926";
 import Drug10 from "./5017007014515";
+import Drug11 from "./5060013941627";
+import Drug12 from "./5012727912189";
 
 interface IMedicineData {
   [index: string]: IDrug;
@@ -30,7 +32,9 @@ export const MedicineData: IMedicineData = {
   "5017123055164": Drug7,
   "5012854010178": Drug8,
   "5021730030926": Drug9,
-  "5017007014515": Drug10
+  "5017007014515": Drug10,
+  "5060013941627": Drug11,
+  "5012727912189": Drug12
 };
 
 export const BarcodeMapping: IBarcodeMap = {
