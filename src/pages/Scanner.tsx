@@ -83,6 +83,12 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
       this.state.scannerType = ScannerType.PRESCRIPTION;
     } else {
       this.state.scannerType = ScannerType.MEDICINE;
+      if (
+        this.state.currentPrescription.remainingItems &&
+        this.state.currentPrescription.remainingItems.length === 0
+      ) {
+        this.state.isPrescriptionComplete = true;
+      }
     }
 
     this.state.isFetchingData = false;
@@ -169,14 +175,25 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
       currentPrescription: prescription
     });
 
-    window.localStorage.setItem(
-      "currentPrescription",
-      JSON.stringify(prescription)
-    );
-
     await this.updateRemainingItems(prescription);
 
+    if (
+      this.state.currentPrescription &&
+      this.state.currentPrescription.remainingItems &&
+      this.state.currentPrescription.remainingItems.length === 0
+    ) {
+      await this.setStateAsync({
+        ...this.state,
+        isPrescriptionComplete: true
+      });
+    }
+
     await this.updateHeading(ScannerType.MEDICINE);
+
+    window.localStorage.setItem(
+      "currentPrescription",
+      JSON.stringify(this.state.currentPrescription)
+    );
   }
 
   isDrugValid(prescription: IPrescription, drugBarcode: string): IDrug | false {
@@ -397,11 +414,9 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     await this.updateHeading(ScannerType.PRESCRIPTION);
 
     this.key = this.generateKey();
-    console.log(this.key);
   }
 
   render() {
-    console.log(this.state.isPrescriptionComplete);
     let currentItem;
     if (
       this.state.currentPrescription &&
@@ -414,7 +429,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
       }
     }
 
-    let developerButtons = false;
+    let developerButtons = true;
 
     return (
       <Layout padding="0" key={this.key}>
