@@ -1,3 +1,5 @@
+import IDrug from "../../models/Drug";
+
 /* Prescription 1 */
 import Drug1 from "./5012617009791";
 import Drug2 from "./5012617019783";
@@ -6,14 +8,14 @@ import Drug4 from "./5000123104307";
 import Drug5 from "./5023497400615";
 
 interface IMedicineData {
-  [index: string]: Object;
+  [index: string]: IDrug;
 }
 
 interface IBarcodeMap {
   [index: string]: string;
 }
 
-const MedicineData: IMedicineData = {
+export const MedicineData: IMedicineData = {
   "5012617009791": Drug1,
   "5012617019783": Drug2,
   "5060149311141": Drug3,
@@ -21,7 +23,7 @@ const MedicineData: IMedicineData = {
   "5023497400615": Drug5
 };
 
-const BarcodeMapping: IBarcodeMap = {
+export const BarcodeMapping: IBarcodeMap = {
   "5012617009791": "5012617009791",
   "5012617019783": "5012617019783",
   "5060149311141": "5060149311141",
@@ -41,7 +43,7 @@ const BarcodeMapping: IBarcodeMap = {
   "5060013940927": "5012727912189"
 };
 
-const normailseBarcode = (barcode: string) => {
+export const normailseBarcode = (barcode: string) => {
   if (barcode) {
     const normalisedBarcode = BarcodeMapping[barcode];
     return normalisedBarcode ? normalisedBarcode : false;
@@ -49,5 +51,3 @@ const normailseBarcode = (barcode: string) => {
 
   return false;
 };
-
-export { MedicineData, normailseBarcode };

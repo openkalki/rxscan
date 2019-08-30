@@ -200,9 +200,11 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     const medicineInfo = this.lookupDrugInfo(drugBarcode);
     let isValid = false;
 
-    if (medicineInfo && TestPrescription) {
+    if (medicineInfo && this.state.currentPrescription) {
       //This is where we check if the prescription item is valid
-      isValid = TestPrescription.items[drugBarcode] ? true : false;
+      isValid = this.state.currentPrescription.items[drugBarcode]
+        ? true
+        : false;
     }
 
     return isValid ? (medicineInfo as IDrug) : false;
@@ -380,7 +382,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     //This will take in a scanned prescription later
 
     //await this.updatePrescription(TestPrescription2);
-    this.validateScannedBarcode("92838847653726356478");
+    this.validateScannedBarcode("02938472618394763827");
   }
 
   getDeveloperScanButton() {
@@ -430,7 +432,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
       }
     }
 
-    let developerButtons = false;
+    let developerButtons = true;
 
     return (
       <Layout padding="0">
