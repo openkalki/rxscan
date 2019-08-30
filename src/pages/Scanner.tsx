@@ -413,7 +413,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     });
     await this.updateHeading(ScannerType.PRESCRIPTION);
 
-    this.key = this.generateKey();
+    //this.key = this.generateKey();
   }
 
   render() {
@@ -432,7 +432,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
     let developerButtons = false;
 
     return (
-      <Layout padding="0" key={this.key}>
+      <Layout padding="0">
         <ScannerContainer id="scanner-container">
           <ScanMedicineHeader>
             <ScanMedicineTitleContainer>
