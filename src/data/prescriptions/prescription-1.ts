@@ -1,7 +1,7 @@
 import IPrescription from "../../models/Prescription";
 
 const data: IPrescription = {
-  barcode: "5017007067610",
+  barcode: "92838847653726356478",
   items: {
     "5012617009791": {
       quantity: 112,

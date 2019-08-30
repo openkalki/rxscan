@@ -1,5 +1,5 @@
 import React from "react";
-import { MedicineData } from "../data/medicine";
+import { MedicineData, normailseBarcode } from "../data/medicine";
 import { PrescriptionData } from "../data/prescriptions";
 import Layout from "../components/Layout";
 //@ts-ignore
@@ -326,10 +326,11 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
       if (this.state.currentPrescription.remainingItems.length !== 0) {
         const currentItem = this.getCurrentItem() as IDrug;
         let isDrugValid = false;
-        if (currentItem.barcode === barcode) {
+        const normalizedBarcode = normailseBarcode(barcode);
+        if (currentItem.barcode === normalizedBarcode && normalizedBarcode) {
           isDrugValid = await this.validateDrug(
             this.state.currentPrescription,
-            barcode
+            normalizedBarcode
           );
         }
 
