@@ -280,7 +280,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
 
         let scanSettings = scanner.getScanSettings();
         // Disregard duplicated results found in a specified time period
-        scanSettings.duplicateForgetTime = 2000;
+        scanSettings.duplicateForgetTime = 500;
         // Set a interval so that the CPU can relax
         scanSettings.intervalTime = 2;
         scanner.setScanSettings(scanSettings);
