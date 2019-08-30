@@ -432,7 +432,7 @@ class Scanner extends React.Component<IScannerProps, IScannerState> {
       }
     }
 
-    let developerButtons = true;
+    let developerButtons = false;
 
     return (
       <Layout padding="0">
